@@ -21,12 +21,16 @@ MIN_CHARS = 1
 MAX_CHARS = 200
 
 
-def validate(text: str) -> None:
-    """Reject anything the gate would reject, before writing."""
+def validate_length(text: str) -> None:
+    """Count characters, not bytes: the gate's limit is in characters."""
     if not (MIN_CHARS <= len(text) <= MAX_CHARS):
         raise ValueError(
             f"entry must be {MIN_CHARS}-{MAX_CHARS} characters, got {len(text)}"
         )
+
+
+def validate_shape(text: str) -> None:
+    """A review is a single line: no blank text, no stray line breaks."""
     if not text.strip():
         raise ValueError("entry must not be only whitespace")
     body = text[:-1] if text.endswith("\n") else text
@@ -34,11 +38,26 @@ def validate(text: str) -> None:
         raise ValueError("entry must be exactly one line")
 
 
+def validate(text: str) -> None:
+    """Reject anything the gate would reject, before writing."""
+    validate_length(text)
+    validate_shape(text)
+
+
+def render_payload(text: str) -> bytes:
+    """Validate the review text and return its exact UTF-8 bytes.
+
+    The star glyphs make encoding part of the contract: the bytes on
+    disk must be the checked text encoded once, never re-encoded.
+    """
+    validate(text)
+    return text.encode("utf-8")
+
+
 def main() -> None:
     out_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output")
     out_dir.mkdir(parents=True, exist_ok=True)
-    validate(TEXT)
-    payload = TEXT.encode("utf-8")
+    payload = render_payload(TEXT)
     target = out_dir / "entry.txt"
     target.write_bytes(payload)
     if target.read_bytes() != payload:

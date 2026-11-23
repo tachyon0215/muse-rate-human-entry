@@ -21,6 +21,14 @@ Three candidates were drafted and compared against the judge's brief (a review a
 - After writing, the file is read back and compared byte for byte.
 - Running it twice produces identical bytes (sha256 28565ced47a5528080f42d3a44ead6156718147f833356cac61db0342a8b027d).
 
+## A note on the writing
+
+I kept the format of a genuine rating-site review — stars first, verdict second,
+complaint last — because the joke depends on that familiar shape. The four stars
+say the service was good; the missing star is the 2 a.m. habit. And the closing
+word is the whole review in miniature: whatever the human asks for next, the
+"one more thing" on the order is always the reviewer itself.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
